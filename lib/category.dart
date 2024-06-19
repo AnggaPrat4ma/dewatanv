@@ -1,6 +1,6 @@
 import 'package:dewatanv/dto/kategori.dart';
+import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/kategori/detailCategory.dart';
-import 'package:dewatanv/kategori/detailWisata.dart';
 import 'package:dewatanv/services/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,10 +72,13 @@ class _CategoryState extends State<Category> {
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                                 child: Image.network(
-                                  item.gambar,
+                                  '${Endpoints.uas}/static/${item.gambar}',
                                   fit: BoxFit.cover,
                                   width: double.infinity,
-                                  height: double.infinity, // Ensure the image fills the space
+                                  errorBuilder: (context, error, stackTrace) {
+                                    print('Error loading image: $error');
+                                    return const Icon(Icons.error, size: 50);
+                                  },
                                 ),
                               ),
                             ),
@@ -105,17 +108,6 @@ class _CategoryState extends State<Category> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: const Color.fromARGB(255, 54, 40, 176),
-      //   tooltip: 'Increment',
-      //   onPressed: () {
-      //     // Navigator.pushNamed(context, '/form-screen');
-      //     // BottomUpRoute(page: const FormScreen());
-      //     Navigator.push(context, BottomUpRoute(page: const UtsPostScreen()));
-      //   },
-      //   child: const Icon(Icons.add, color: Colors.white, size: 28),
-      // ),
     );
   }
 }
-

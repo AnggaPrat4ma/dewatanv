@@ -13,11 +13,12 @@ class Endpoints {
   static const String logout= "$baseURLLive/api/auth/logout";
 
   //uas
-  static const String host = "192.168.41.123";
+  static const String host = "192.168.1.25";
   static const String uas = "http://$host:5000";
 
   static const String login= "$uas/auth/login";
   static const String kategori= "$uas/kategori";
   static const String wisata= "$uas/data_wisata";
+  static const String registrasi= "$uas/auth/register";
 
 }

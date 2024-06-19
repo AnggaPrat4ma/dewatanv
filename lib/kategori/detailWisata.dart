@@ -1,78 +1,106 @@
+import 'package:dewatanv/dto/data_wisata.dart';
 import 'package:dewatanv/dto/wisata.dart';
-import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/services/data_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flick_video_player/flick_video_player.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:video_player/video_player.dart';
 
-class WisataScreen extends StatefulWidget {
-  final int idKategori;
+class WisataScreendetail extends StatefulWidget {
+  final int idwisata;
 
-  WisataScreen({required this.idKategori});
+  WisataScreendetail({required this.idwisata});
 
   @override
-  _WisataScreenState createState() => _WisataScreenState();
+  _WisataScreendetailState createState() => _WisataScreendetailState();
 }
 
-class _WisataScreenState extends State<WisataScreen> {
-  late Future<List<Wisata>> futureWisata;
+class _WisataScreendetailState extends State<WisataScreendetail> {
+  Future<DataWisata?>? _wisataFuture;
 
-  @override
-  void initState() {
-    super.initState();
-    futureWisata = DataService.fetchwisata(widget.idKategori);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _wisataFuture = DataService.getWisataById(widget.idwisata);
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('data'),
+        title: Text('Detail Wisata'),
       ),
-      body: FutureBuilder<List<Wisata>>(
-        future: futureWisata,
+      body: FutureBuilder<DataWisata?>(
+        future: _wisataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            debugPrint(widget.idKategori.toString());
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
-          } else {
-            List<Wisata> wisataList = snapshot.data!;
-            return ListView.builder(
-              itemCount: wisataList.length,
-              itemBuilder: (context, index) {
-                final wisata = wisataList[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (wisata.gambar != null) 
-                        Image.network(
-                          Uri.parse('${Endpoints.uas}/static/${wisata.gambar}').toString()
-                        )
-                      else
-                        Container(height: 200, color: Colors.grey), // Placeholder for missing image
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          wisata.nama,
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(wisata.deskripsi),
-                      ),
-                    ],
+          if (snapshot.hasData) {
+            final wisata = snapshot.data!;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (wisata.gambar != null)
+                    Image.network(wisata.gambar!),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      wisata.nama,
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                );
-              },
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(wisata.deskripsi),
+                  ),
+                  if (wisata.video != null)
+                    FlickVideoPlayer(
+                      flickManager: FlickManager(
+                        videoPlayerController:
+                            VideoPlayerController.network(wisata.video!),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Rating: ${wisata.rating}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Kategori ID: ${wisata.idkategori}'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 200,
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: _parseLatLng(wisata.maps),
+                          zoom: 14.0,
+                        ),
+                        markers: {
+                          Marker(
+                            markerId: MarkerId(wisata.idwisata.toString()),
+                            position: _parseLatLng(wisata.maps),
+                          ),
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
           }
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
+  }
+
+  LatLng _parseLatLng(String maps) {
+    final parts = maps.split(',');
+    final lat = double.parse(parts[0]);
+    final lng = double.parse(parts[1]);
+    return LatLng(lat, lng);
   }
 }

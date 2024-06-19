@@ -1,42 +1,39 @@
-import 'dart:convert';
-
-import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
-import 'package:dewatanv/dto/login.dart';
 import 'package:dewatanv/home_screen.dart';
+import 'package:dewatanv/login_screen.dart';
 import 'package:dewatanv/services/data_service.dart';
-import 'package:dewatanv/utils/constants.dart';
-import 'package:dewatanv/utils/secure_storage_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class Register extends StatefulWidget {
+  const Register({ Key? key }) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterState extends State<Register> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isHovering = false;
 
-  void sendLogin(context, AuthCubit authCubit) async {
-    final username= _usernameController.text;
+  void sendRegister() async {
+    final name = _nameController.text;
+    final username = _usernameController.text;
     final password = _passwordController.text;
-
-    final response = await DataService.sendLoginData(username, password);
-    if(response.statusCode == 200) {
+    debugPrint(name);
+    debugPrint(username);
+    debugPrint(password);
+    final response = await DataService.sendSignUpData(name, username, password);
+    debugPrint(response.statusCode.toString());
+    if (response.statusCode == 201) {
       debugPrint("sending success");
-      final data = jsonDecode(response.body);
-      final loggedIn = Login.fromJson(data);
-      await SecureStorageUtil.storage.write(key: tokenStoreName, value: loggedIn.accessToken);
-
-      authCubit.login(loggedIn.accessToken);
-      Navigator.pushReplacementNamed(context, '/home-page');
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) {
+          return const LoginPage();
+        },
+      ));
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(), // Ganti dengan layar tujuan setelah login
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -53,16 +50,13 @@ class _LoginPageState extends State<LoginPage> {
           );
         },
       );
-      debugPrint(loggedIn.accessToken);
-    }
-    else{
-      debugPrint('failed send login');
+    } else {
+      debugPrint("failed not cannot sign up");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authCubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -119,6 +113,21 @@ class _LoginPageState extends State<LoginPage> {
                             border: Border(bottom: BorderSide(color: Colors.grey)),
                           ),
                           child: TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              icon: const Icon(Icons.person, color: Colors.grey),
+                              border: InputBorder.none,
+                              hintText: "Nama Lengkap",
+                              hintStyle: TextStyle(color: Colors.grey[400]),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: const BoxDecoration(
+                            border: Border(bottom: BorderSide(color: Colors.grey)),
+                          ),
+                          child: TextField(
                             controller: _usernameController,
                             decoration: InputDecoration(
                               icon: const Icon(Icons.person, color: Colors.grey),
@@ -149,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                     onEnter: (_) => setState(() => _isHovering = true),
                     onExit: (_) => setState(() => _isHovering = false),
                   child: InkWell(
-                    onTap: () { sendLogin(context, authCubit); },
+                    onTap: () { sendRegister(); },
                     //onTap: () => Navigator.pushReplacementNamed(context, '/home-page'),
                     child: AnimatedContainer(
                         duration: const Duration(seconds: 2),
@@ -171,45 +180,13 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       alignment: Alignment.center,
                       child: const Text(
-                        'Login',
+                        'Registrasi',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
                   ),
                   ),
                   const SizedBox(height: 10),
-                  MouseRegion(
-                    onEnter: (_) => setState(() => _isHovering = true),
-                    onExit: (_) => setState(() => _isHovering = false),
-                  child: InkWell(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/register'),
-                    child: AnimatedContainer(
-                        duration: const Duration(seconds: 2),
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: _isHovering
-                                ? [const Color.fromARGB(255, 0, 0, 0), const Color.fromARGB(255, 0, 0, 0)] // Warna berubah saat hover
-                                : [const Color(0xFF61A4F1), const Color(0xFF478DE0)],
-                          ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color.fromRGBO(143, 148, 251, .4),
-                            blurRadius: 20.0,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                    ),
-                  ),
-                  ),
-                  const SizedBox(height: 10,),
                   TextButton(
                     onPressed: () {
                       // Implementasi untuk lupa password
@@ -228,5 +205,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-

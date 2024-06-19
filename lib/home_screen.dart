@@ -1,3 +1,4 @@
+import 'package:dewatanv/wisata/pantai_penimbangan.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -93,16 +94,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // void navigateToCategory(String title) {
-  //   switch (title) {
-  //     case 'Monumen Bajra Sandhi':
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const NusaDua()),
-  //       );
-  //     break;
-  //   }
-  // }
+  void navigateToCategory(String title) {
+    switch (title) {
+      case 'Monumen Bajra Sandhi':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PantaiPenimbangan()),
+        );
+      break;
+    }
+  }
 
   Widget _buildStarRating(int rating) {
     return Row(
@@ -163,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final content = featuredContents[index];
                   return GestureDetector(
-                    // onTap: () {
-                    //   navigateToCategory(content['title']);
-                    // },
+                    onTap: () {
+                      navigateToCategory(content['title']);
+                    },
                     child: Stack(
                       children: [
                         content['image']!.startsWith('http')

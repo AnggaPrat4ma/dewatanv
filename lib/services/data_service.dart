@@ -1,5 +1,6 @@
 import 'package:dewatanv/dto/balance.dart';
 import 'package:dewatanv/dto/customer_service.dart';
+import 'package:dewatanv/dto/data_wisata.dart';
 import 'package:dewatanv/dto/datas.dart';
 import 'package:dewatanv/dto/kategori.dart';
 import 'package:dewatanv/dto/news.dart';
@@ -102,32 +103,48 @@ class DataService {
     }
   }
 
-  static Future<List<Wisata>> fetchwisata(int idKategori) async {
-    final response = await http.get(Uri.parse('${Endpoints.uas}/data_wisata/$idKategori'));
+  static Future<List<Wisata>> fetchWisata() async {
+    final response = await http.get(Uri.parse(Endpoints.wisata)); 
     if (response.statusCode == 200) {
-      // List<dynamic> jsonResponse = json.decode(response.body);
-      // // If the response contains a list directly
-      // return jsonResponse.map((data) => Wisata.fromJson(data)).toList();
-      
-      // If the response contains the list within an object
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
-      List<dynamic> wisataList = jsonResponse['datas'];
-      return wisataList.map((data) => Wisata.fromJson(data)).toList();
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>) 
+          .map((item) => Wisata.fromJson(item as Map<String, dynamic>))
+          .toList();
     } else {
-      throw Exception('Failed to load wisata');
+      // Handle error
+      throw Exception('Failed to load data');
     }
   }
 
-  // static Future<List<Wisata>> fetchwisata() async {
-  //   final response = await http.get(Uri.parse(Endpoints.wisata));
+  static Future<Map<String, dynamic>> getWisataById(int idWisata) async {
+    final url = Uri.parse('${Endpoints.wisata}/wisata/$idWisata');
 
-  //   if (response.statusCode == 200) {
-  //     List jsonResponse = json.decode(response.body);
-  //     return jsonResponse.map((data) => Wisata.fromJson(data)).toList();
-  //   } else {
-  //     throw Exception('Failed to load wisata');
-  //   }
-  // }
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return {
+          "message": "OK",
+          "data": data['data'],
+        };
+      } else if (response.statusCode == 404) {
+        return {
+          "message": "Data not found",
+        };
+      } else {
+        return {
+          "message": "Error",
+          "error": "Unexpected error occurred",
+        };
+      }
+    } catch (e) {
+      return {
+        "message": "Error",
+        "error": e.toString(),
+      };
+    }
+  }
 
   static Future<void> deleteCustomerService(String id) async { 
     await http.delete(Uri.parse('${Endpoints.CustomerService}/$id'),
@@ -174,15 +191,58 @@ class DataService {
   }
 
   static Future<List<Wisata>> fetchWisataByCategory(int idKategori) async {
+  try {
     final response = await http.get(Uri.parse('${Endpoints.wisata}/$idKategori'));
 
     if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => Wisata.fromJson(data)).toList();
+      final decodedResponse = jsonDecode(response.body);
+
+      // Debug logging
+      debugPrint('Response data: $decodedResponse');
+
+      // Handle both list and map formats
+      if (decodedResponse is List) {
+        // If the response is a list
+        if (decodedResponse.isEmpty) {
+          debugPrint('No data available: empty list');
+          return [];
+        } else {
+          return decodedResponse
+              .where((item) => item is Map<String, dynamic>) // Ensure each item is a Map
+              .map((item) => Wisata.fromJson(item as Map<String, dynamic>))
+              .toList();
+        }
+      } else if (decodedResponse is Map<String, dynamic> && decodedResponse.containsKey('datas')) {
+        // If the response is a map with a 'datas' key
+        final datas = decodedResponse['datas'];
+        if (datas is List) {
+          if (datas.isEmpty) {
+            debugPrint('No data available: empty "datas" list');
+            return [];
+          } else {
+            return datas
+                .where((item) => item is Map<String, dynamic>) // Ensure each item is a Map
+                .map((item) => Wisata.fromJson(item as Map<String, dynamic>))
+                .toList();
+          }
+        } else {
+          debugPrint('Unexpected "datas" type: ${datas.runtimeType}');
+          throw Exception('Unexpected "datas" type');
+        }
+      } else {
+        // Unexpected JSON format
+        debugPrint('Unexpected JSON format: $decodedResponse');
+        throw Exception('Unexpected JSON format');
+      }
     } else {
-      throw Exception('Failed to load wisata');
+      debugPrint('Failed to load wisata. Status code: ${response.statusCode}');
+      throw Exception('Failed to load');
     }
+  } catch (error) {
+    debugPrint('Error fetching wisata by category: $error');
+    throw Exception('Failed to load wisata');
   }
+}
 
   static Future<http.Response> sendLoginData(String username, String password) async {
     final url = Uri.parse(Endpoints.login);
@@ -210,6 +270,18 @@ class DataService {
       },
     );
 
+    return response;
+  }
+
+  static Future<http.Response> sendSignUpData(
+      String name, String username, String password) async {
+    final url = Uri.parse(Endpoints.registrasi);
+    final data = {'nama_user': name,'username': username, 'password': password};
+    final response = await http.post(
+      url,
+      headers: {'Content-type': 'application/json'},
+      body: jsonEncode(data),
+    );
     return response;
   }
 
