@@ -1,6 +1,7 @@
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,11 +18,10 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
   final _formKey = GlobalKey<FormState>();
   String nama = '';
   String deskripsi = '';
-  int rating = 0;
   String maps = '';
   int idkategori = 0;
   File? _image;
-  File? _video;
+  // File? _video;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -34,20 +34,11 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
     });
   }
 
-  Future<void> _pickVideo() async {
-    final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _video = File(pickedFile.path);
-      }
-    });
-  }
-
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (_image == null || _video == null) {
+      if (_image == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select both an image and a video')),
         );
@@ -66,7 +57,7 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
       request.fields['id_kategori'] = widget.idKategori.toString();
 
       request.files.add(await http.MultipartFile.fromPath('gambar', _image!.path));
-      request.files.add(await http.MultipartFile.fromPath('video', _video!.path));
+      //request.files.add(await http.MultipartFile.fromPath('video', _video!.path));
 
       final response = await request.send();
 
@@ -78,6 +69,13 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
         );
       }
     }
+  }
+
+  double rating = 0;
+  void ratingUpdate(double userRating) {
+    setState(() {
+      rating = userRating;
+    });
   }
 
   @override
@@ -116,18 +114,25 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
                   deskripsi = value!;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Rating'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a rating';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  rating = int.parse(value!);
-                },
+              RatingBar(
+                minRating: 1,
+                maxRating: 5,
+                allowHalfRating: false,
+                ratingWidget: RatingWidget(
+                  full: const Icon(
+                    Icons.star,
+                    color: Color.fromARGB(255, 0, 170, 255),
+                  ),
+                  half: const Icon(
+                    Icons.star_half,
+                    color: Color.fromARGB(255, 0, 170, 255),
+                  ),
+                  empty: const Icon(
+                    Icons.star_border,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                onRatingUpdate: ratingUpdate,
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Maps'),
@@ -141,19 +146,6 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
                   maps = value!;
                 },
               ),
-              // TextFormField(
-              //   decoration: const InputDecoration(labelText: 'ID Kategori'),
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //     if (value!.isEmpty) {
-              //       return 'Please enter a category ID';
-              //     }
-              //     return null;
-              //   },
-              //   onSaved: (value) {
-              //     idkategori = int.parse(value!);
-              //   },
-              // ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _pickImage,
@@ -166,13 +158,6 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
                   width: 100,
                 ),
               const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _pickVideo,
-                child: const Text('Pick Video'),
-              ),
-              if (_video != null)
-                Text('Video selected: ${_video!.path.split('/').last}'),
-              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Create Wisata'),

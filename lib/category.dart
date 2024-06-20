@@ -1,6 +1,7 @@
 import 'package:dewatanv/dto/kategori.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/kategori/detailCategory.dart';
+import 'package:dewatanv/kategori/detailWisata.dart';
 import 'package:dewatanv/services/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -56,7 +57,7 @@ class _CategoryState extends State<Category> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WisataScreen(idKategori: item.idkategori,),
+                            builder: (context) => WisataListScreen( idKategori: item.idkategori, namaKategori: item.namaKategori,),
                           ),
                         );
                       },

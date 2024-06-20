@@ -1,4 +1,4 @@
-import 'package:dewatanv/about_us.dart';
+import 'package:dewatanv/aboutUs.dart';
 import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
 import 'package:dewatanv/cubit/balance/cubit/balance_cubit.dart';
 import 'package:dewatanv/home_page.dart';

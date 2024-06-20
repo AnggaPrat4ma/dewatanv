@@ -1,6 +1,5 @@
 import 'package:dewatanv/dto/balance.dart';
 import 'package:dewatanv/dto/customer_service.dart';
-import 'package:dewatanv/dto/data_wisata.dart';
 import 'package:dewatanv/dto/datas.dart';
 import 'package:dewatanv/dto/kategori.dart';
 import 'package:dewatanv/dto/news.dart';
@@ -116,35 +115,35 @@ class DataService {
     }
   }
 
-  static Future<Map<String, dynamic>> getWisataById(int idWisata) async {
-    final url = Uri.parse('${Endpoints.wisata}/wisata/$idWisata');
+  // static Future<Map<String, dynamic>> getWisataById(int idWisata) async {
+  //   final url = Uri.parse('${Endpoints.wisata}/wisata/$idWisata');
 
-    try {
-      final response = await http.get(url);
+  //   try {
+  //     final response = await http.get(url);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return {
-          "message": "OK",
-          "data": data['data'],
-        };
-      } else if (response.statusCode == 404) {
-        return {
-          "message": "Data not found",
-        };
-      } else {
-        return {
-          "message": "Error",
-          "error": "Unexpected error occurred",
-        };
-      }
-    } catch (e) {
-      return {
-        "message": "Error",
-        "error": e.toString(),
-      };
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final data = json.decode(response.body);
+  //       return {
+  //         "message": "OK",
+  //         "data": data['data'],
+  //       };
+  //     } else if (response.statusCode == 404) {
+  //       return {
+  //         "message": "Data not found",
+  //       };
+  //     } else {
+  //       return {
+  //         "message": "Error",
+  //         "error": "Unexpected error occurred",
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       "message": "Error",
+  //       "error": e.toString(),
+  //     };
+  //   }
+  // }
 
   static Future<void> deleteCustomerService(String id) async { 
     await http.delete(Uri.parse('${Endpoints.CustomerService}/$id'),
@@ -188,6 +187,16 @@ class DataService {
     );
 
     return response;
+  }
+
+  static Future<Wisata> fetchWisataById(int idwisata) async {
+    final response = await http.get(Uri.parse('${Endpoints.wisata}/wisata/$idwisata'));
+
+    if (response.statusCode == 200) {
+      return Wisata.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load wisata');
+    }
   }
 
   static Future<List<Wisata>> fetchWisataByCategory(int idKategori) async {
