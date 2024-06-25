@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: List.generate(5, (index) {
         return Icon(
-          index < rating ? Icons.star : Icons.star_border,
+          index < rating ? Icons.star : Icons.star_border ,
           size: 16.0,
           color: Colors.amber,
         );
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30.0),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black26,
                       blurRadius: 10.0,
@@ -141,17 +141,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: Icon(Icons.clear, color: Colors.grey),
+                            icon: const Icon(Icons.clear, color: Colors.grey),
                             onPressed: () {
                               _searchController.clear();
                             },
                           )
                         : null,
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
                   ),
                 ),
               ),
@@ -261,14 +261,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                         ),
                       ),
-                      SizedBox(height: 5.0),
+                      const SizedBox(height: 5.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Text(
                               _filteredVideos[index]['title']!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,

@@ -16,4 +16,6 @@ class Kategori{
       gambar: json['gambar'] as String?,
     );
   }
+
+  get idwisata => null;
 }

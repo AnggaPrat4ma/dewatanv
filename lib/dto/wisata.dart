@@ -5,7 +5,6 @@ class Wisata {
   final String deskripsi;
   final String? gambar;
   final int rating;
-  final String maps;
   final int idkategori;
   final double Latitude;
   final double Longtitude;
@@ -16,24 +15,21 @@ class Wisata {
     required this.deskripsi,
     this.gambar,
     required this.rating,
-    required this.maps,
     required this.idkategori,
     required this.Latitude,
     required this.Longtitude
   });
 
-  factory Wisata.fromJson(Map<String, dynamic> json) {
-    return Wisata(
+  factory Wisata.fromJson(Map<String, dynamic> json) => Wisata(
       idwisata: json['id_wisata'] as int,
       nama: json['nama_wisata'] as String,
       deskripsi: json['deskripsi'] as String,
       gambar: json['gambar'] as String?,
       rating: json['rating_wisata'] as int,
-      maps: json['maps'] as String,
       idkategori: json['id_kategori'] as int,
       Latitude: double.parse(json['Latitude'] as String),
       Longtitude: double.parse(json['Longtitude'] as String),
-  );}
+  );
 
 
 }

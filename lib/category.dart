@@ -1,6 +1,7 @@
 import 'package:dewatanv/dto/kategori.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/kategori/detailCategory.dart';
+// ignore: unused_import
 import 'package:dewatanv/kategori/detailWisata.dart';
 import 'package:dewatanv/services/data_service.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Category extends StatefulWidget {
   const Category({Key? key}) : super(key: key);
+  //final int idwisata;
 
   @override
+  // ignore: library_private_types_in_public_api
   _CategoryState createState() => _CategoryState();
 }
 
@@ -57,7 +60,7 @@ class _CategoryState extends State<Category> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WisataListScreen( idKategori: item.idkategori, namaKategori: item.namaKategori,),
+                            builder: (context) => WisataScreen( idKategori: item.idkategori, namaKategori: item.namaKategori),
                           ),
                         );
                       },

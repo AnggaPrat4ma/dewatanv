@@ -189,11 +189,11 @@ class DataService {
     return response;
   }
 
-  static Future<Wisata> fetchWisataById(int idwisata) async {
-    final response = await http.get(Uri.parse('${Endpoints.wisata}/wisata/$idwisata'));
+  static Future<Wisata> fetchWisataById(int idWisata) async {
+    final response = await http.get(Uri.parse('${Endpoints.wisata}/wisata/$idWisata'));
 
     if (response.statusCode == 200) {
-      return Wisata.fromJson(json.decode(response.body));
+      return Wisata.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load wisata');
     }
@@ -280,6 +280,11 @@ class DataService {
     );
 
     return response;
+  }
+
+  static Future<void> deleteWisata(int idwisata) async { 
+    await http.delete(Uri.parse('${Endpoints.delete}/$idwisata'),
+        headers: {'Content-type': 'application/json'});
   }
 
   static Future<http.Response> sendSignUpData(
