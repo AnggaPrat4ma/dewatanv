@@ -4,9 +4,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 class PantaiPenimbangan extends StatefulWidget {
-  const PantaiPenimbangan({ Key? key }) : super(key: key);
+  const PantaiPenimbangan({ super.key });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PantaiPenimbanganState createState() => _PantaiPenimbanganState();
 }
 

@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Register extends StatefulWidget {
-  const Register({ Key? key }) : super(key: key);
+  const Register({ super.key });
 
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterState createState() => _RegisterState();
 }
 
@@ -29,6 +30,7 @@ class _RegisterState extends State<Register> {
     debugPrint(response.statusCode.toString());
     if (response.statusCode == 201) {
       debugPrint("sending success");
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) {
           return const LoginPage();

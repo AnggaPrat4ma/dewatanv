@@ -57,6 +57,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
     try {
       await db.delete('data', where: "id = ?", whereArgs: [id]);
+    // ignore: empty_catches
     } catch (e) {
       
     }

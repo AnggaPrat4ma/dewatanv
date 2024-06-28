@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Category extends StatefulWidget {
-  const Category({Key? key}) : super(key: key);
+  const Category({super.key});
   //final int idwisata;
 
   @override
@@ -76,11 +76,11 @@ class _CategoryState extends State<Category> {
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                                 child: Image.network(
-                                  '${Endpoints.uas}/static/${item.gambar}',
+                                  '${Endpoints.baseUrl}/static/${item.gambar}',
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   errorBuilder: (context, error, stackTrace) {
-                                    print('Error loading image: $error');
+                                    debugPrint('Error loading image: $error');
                                     return const Icon(Icons.error, size: 50);
                                   },
                                 ),

@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthWrapper extends StatelessWidget {
   final Widget child;
-  const AuthWrapper({Key? key, required this.child}) : super(key: key);
+  const AuthWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class AuthWrapper extends StatelessWidget {
               storedAccessToken == authCubit.state.accessToken) {
             return child; // Display the child screen if tokens match
           } else {
-            return LoginPage(); // Redirect if no token or mismatch
+            return const LoginPage(); // Redirect if no token or mismatch
           }
         } else {
           // Show a loading indicator while fetching the token

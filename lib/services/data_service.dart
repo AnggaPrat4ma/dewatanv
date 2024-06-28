@@ -1,9 +1,5 @@
-import 'package:dewatanv/dto/balance.dart';
-import 'package:dewatanv/dto/customer_service.dart';
-import 'package:dewatanv/dto/datas.dart';
 import 'package:dewatanv/dto/kategori.dart';
-import 'package:dewatanv/dto/news.dart';
-import 'package:dewatanv/dto/spending.dart';
+import 'package:dewatanv/dto/profile.dart';
 import 'package:dewatanv/dto/wisata.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/utils/constants.dart';
@@ -13,81 +9,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class DataService {
-  static Future<List<News>> fetchNews() async {
-    final response = await http.get(Uri.parse(Endpoints.news));
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonResponse = jsonDecode(response.body);
-      return jsonResponse.map((item) => News.fromJson(item)).toList();
-    } else {
-      // Handle error
-      throw Exception('Failed to load news');
-    }
-  }
-
-  static Future<List<Datas>> fetchDatas() async {
-    final response = await http.get(Uri.parse(Endpoints.datas));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return (data['datas'] as List<dynamic>)
-          .map((item) => Datas.fromJson(item as Map<String, dynamic>))
-          .toList();
-    } else {
-      // Handle error
-      throw Exception('Failed to load data');
-    }
-  }
-
-  // post data to endpoint news
-  static Future<News> createNews(String title, String body) async {
-    final response = await http.post(
-      Uri.parse(Endpoints.news),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'title': title,
-        'body': body,
-      }),
-    );
-    
-
-    if (response.statusCode == 201) {
-      // Check for creation success (201 Created)
-      final jsonResponse = jsonDecode(response.body);
-      return News.fromJson(jsonResponse);
-    } else {
-      // Handle error
-      throw Exception('Failed to create post: ${response.statusCode}');
-    }
-  }
-
-  static Future<void> updateNews(String id, String title, String body) async {
-    Map<String, String> data = {"id": id, "title": title, "body": body};
-    String jsonData = jsonEncode(data);
-    await http.put(Uri.parse('${Endpoints.news}/$id'),
-        body: jsonData, headers: {'Content-type': 'application/json'});
-  }
-
-  static Future<void> deleteDatas(int id) async {
-    final url = Uri.parse('${Endpoints.datas}/$id');
-    final response = await http.delete(url);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete data');
-    }
-  }
-
-  static Future<List<CustomerService>> fetchCustomerService() async {
-    final response = await http.get(Uri.parse(Endpoints.CustomerService)); 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return (data['datas'] as List<dynamic>) 
-          .map((item) => CustomerService.fromJson(item as Map<String, dynamic>))
-          .toList();
-    } else {
-      // Handle error
-      throw Exception('Failed to load data');
-    }
-  }
 
   static Future<List<Kategori>> fetchkategori() async {
     final response = await http.get(Uri.parse('${Endpoints.kategori}/read')); 
@@ -115,47 +36,38 @@ class DataService {
     }
   }
 
-  // static Future<Map<String, dynamic>> getWisataById(int idWisata) async {
-  //   final url = Uri.parse('${Endpoints.wisata}/wisata/$idWisata');
-
-  //   try {
-  //     final response = await http.get(url);
-
-  //     if (response.statusCode == 200) {
-  //       final data = json.decode(response.body);
-  //       return {
-  //         "message": "OK",
-  //         "data": data['data'],
-  //       };
-  //     } else if (response.statusCode == 404) {
-  //       return {
-  //         "message": "Data not found",
-  //       };
-  //     } else {
-  //       return {
-  //         "message": "Error",
-  //         "error": "Unexpected error occurred",
-  //       };
-  //     }
-  //   } catch (e) {
-  //     return {
-  //       "message": "Error",
-  //       "error": e.toString(),
-  //     };
+  // static Future<Akun> fetchAkunById(int idUser) async {
+  //   // Replace with your API call
+  //   final response = await http.get(Uri.parse('${Endpoints.akun}/user/$idUser'));
+  //   if (response.statusCode == 200) {
+  //     final data = jsonDecode(response.body);
+  //     return Akun.fromJson(data);
+  //   } else {
+  //     throw Exception('Failed to load user data');
   //   }
   // }
 
-  static Future<void> deleteCustomerService(String id) async { 
-    await http.delete(Uri.parse('${Endpoints.CustomerService}/$id'),
-        headers: {'Content-type': 'application/json'});
+  static Future<List<Akun>> fetchAkunById(int idUser) async {
+    final response = await http.get(Uri.parse('${Endpoints.akun}/user/$idUser'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => Akun.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idUser, status code: ${response.statusCode}');
+    }
   }
 
-  static Future<List<Balances>> fetchBalances() async {
-    final response = await http.get(Uri.parse(Endpoints.balance)); 
+  static Future<List<Akun>> fetchAkun() async {
+    final response = await http.get(Uri.parse('${Endpoints.akun}/read')); 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>) 
-          .map((item) => Balances.fromJson(item as Map<String, dynamic>))
+          .map((item) => Akun.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Handle error
@@ -163,30 +75,19 @@ class DataService {
     }
   }
 
-  static Future<List<Spendings>> fetchSpendings() async {
-    final response = await http.get(Uri.parse(Endpoints.spending)); 
+  static Future<List<Akun>> fetchUserById(int iduser) async {
+    final response = await http.get(Uri.parse('${Endpoints.profile}/$iduser'));
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return (data['datas'] as List<dynamic>) 
-          .map((item) => Spendings.fromJson(item as Map<String, dynamic>))
+      return (data['datas'] as List<dynamic>)
+          .map((item) => Akun.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
-      // Handle error
-      throw Exception('Failed to load data');
+      // Tangani error
+      throw Exception(
+        'Gagal memuat data pengguna dengan id $iduser, status code: ${response.statusCode}');
     }
-  }
-
-  static Future <http.Response> sendSpendingData(int spending) async {
-    final url = Uri.parse(Endpoints.spending);
-    final data = {'spending' : spending};
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-
-    return response;
   }
 
   static Future<Wisata> fetchWisataById(int idWisata) async {
@@ -199,9 +100,11 @@ class DataService {
     }
   }
 
-  static Future<List<Wisata>> fetchWisataByCategory(int idKategori) async {
+  static Future<List<Wisata>> fetchWisataByCategory(int idKategori, int page) async {
   try {
-    final response = await http.get(Uri.parse('${Endpoints.wisata}/$idKategori'));
+    final response = await http.get(Uri.parse('${Endpoints.wisata}/$idKategori').replace(queryParameters: {
+    'page': page.toString(),
+  }));
 
     if (response.statusCode == 200) {
       final decodedResponse = jsonDecode(response.body);
@@ -217,8 +120,8 @@ class DataService {
           return [];
         } else {
           return decodedResponse
-              .where((item) => item is Map<String, dynamic>) // Ensure each item is a Map
-              .map((item) => Wisata.fromJson(item as Map<String, dynamic>))
+              .whereType<Map<String, dynamic>>() // Ensure each item is a Map
+              .map((item) => Wisata.fromJson(item))
               .toList();
         }
       } else if (decodedResponse is Map<String, dynamic> && decodedResponse.containsKey('datas')) {
@@ -230,8 +133,8 @@ class DataService {
             return [];
           } else {
             return datas
-                .where((item) => item is Map<String, dynamic>) // Ensure each item is a Map
-                .map((item) => Wisata.fromJson(item as Map<String, dynamic>))
+                .whereType<Map<String, dynamic>>() // Ensure each item is a Map
+                .map((item) => Wisata.fromJson(item))
                 .toList();
           }
         } else {

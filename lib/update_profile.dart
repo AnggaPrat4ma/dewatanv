@@ -1,38 +1,31 @@
-import 'package:dewatanv/dto/wisata.dart';
+import 'package:dewatanv/dto/profile.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-class UpdateWisataScreen extends StatefulWidget {
-  const UpdateWisataScreen({required this.wisata, super.key});
-  final Wisata wisata;
+class UpdateProfile extends StatefulWidget {
+  const UpdateProfile({required this.akun, super.key});
+  final Akun akun;
 
   @override
   // ignore: library_private_types_in_public_api
-  _UpdateWisataScreenState createState() => _UpdateWisataScreenState();
+  _UpdateProfileState createState() => _UpdateProfileState();
 }
 
-class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
+class _UpdateProfileState extends State<UpdateProfile> {
   late TextEditingController _namaController;
-  late TextEditingController _deskripsiController;
-  late TextEditingController _latitudeController;
-  late TextEditingController _longtitudeController;
+  late TextEditingController _lokasiController;
   File? _image;
   final _picker = ImagePicker();
-  double rating = 0;
 
   @override
   void initState() {
     super.initState();
-    _namaController = TextEditingController(text: widget.wisata.nama);
-    _deskripsiController = TextEditingController(text: widget.wisata.deskripsi);
-    _latitudeController = TextEditingController(text: widget.wisata.latitude.toString());
-    _longtitudeController = TextEditingController(text: widget.wisata.longtitude.toString());
-    rating = 0;
+    _namaController = TextEditingController(text: widget.akun.namaUser);
+    _lokasiController = TextEditingController(text: widget.akun.lokasi);
   }
 
   void _showPicker({required BuildContext context}) {
@@ -81,12 +74,9 @@ class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
   Future<void> _updateDataWithImage(BuildContext context) async {
     try {
       var request = http.MultipartRequest('PUT',
-        Uri.parse('${Endpoints.wisata}/update/${widget.wisata.idwisata}'));
+        Uri.parse('${Endpoints.akun}/update/${widget.akun.idUser}'));
       request.fields['nama_wisata'] = _namaController.text;
-      request.fields['deskripsi'] = _deskripsiController.text;
-      request.fields['rating_wisata'] = rating.toString();
-      request.fields['Latitude'] = _latitudeController.text;
-      request.fields['Longtitude'] = _longtitudeController.text;
+      request.fields['lokasi'] = _lokasiController.text;
 
       if (_image != null) {
         var multipartFile = await http.MultipartFile.fromPath(
@@ -119,23 +109,15 @@ class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
   @override
   void dispose() {
     _namaController.dispose();
-    _deskripsiController.dispose();
-    _latitudeController.dispose();
-    _longtitudeController.dispose();
+    _lokasiController.dispose();
     super.dispose();
-  }
-
-  void ratingUpdate(double userRating) {
-    setState(() {
-      rating = userRating;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Wisata'),
+        title: const Text('Update Profile'),
       ),
       body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -145,47 +127,16 @@ class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
                   TextField(
                     controller: _namaController,
                     decoration: const InputDecoration(
-                      labelText: 'Nama Wisata',
+                      labelText: 'Nama',
                     ),
                   ),
                   const SizedBox(height: 16.0),
                   TextField(
-                    controller: _deskripsiController,
+                    controller: _lokasiController,
                     decoration: const InputDecoration(
-                      labelText: 'Deskripsi',
+                      labelText: 'Lokasi',
+                      hintText: 'Provinsi/Negara'
                     ),
-                    maxLines: 3,
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextField(
-                    controller: _latitudeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Latitude',
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextField(
-                    controller: _longtitudeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Longitude',
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Rating:',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  RatingBar.builder(
-                    initialRating: rating,
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    ),
-                    onRatingUpdate: ratingUpdate,
                   ),
                   const SizedBox(height: 16.0),
                   Center(
@@ -208,11 +159,11 @@ class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : widget.wisata.gambar.isNotEmpty
+                            : widget.akun.gambar.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
-                                    "${Endpoints.baseUrl}/static/${widget.wisata.gambar}",
+                                    "${Endpoints.baseUrl}/static/${widget.akun.gambar}",
                                     fit: BoxFit.cover,
                                   ),
                                 )

@@ -7,18 +7,19 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class CreateWisataScreen extends StatefulWidget {
-  const CreateWisataScreen({Key? key, required this.idKategori}) : super(key: key);
+  const CreateWisataScreen({super.key, required this.idKategori});
   final int idKategori;
 
   @override
+  // ignore: library_private_types_in_public_api
   _CreateWisataScreenState createState() => _CreateWisataScreenState();
 }
 
 class _CreateWisataScreenState extends State<CreateWisataScreen> {
-  TextEditingController _namaController = TextEditingController();
-  TextEditingController _deskripsiController = TextEditingController();
-  TextEditingController _LatitudeController = TextEditingController();
-  TextEditingController _LongtitudeController = TextEditingController();
+  final TextEditingController _namaController = TextEditingController();
+  final TextEditingController _deskripsiController = TextEditingController();
+  final TextEditingController _latitudeController = TextEditingController();
+  final TextEditingController _longtitudeController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
   double rating = 0;
@@ -82,8 +83,8 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
     request.fields['nama_wisata'] = _namaController.text;
     request.fields['deskripsi'] = _deskripsiController.text;
     request.fields['rating_wisata'] = rating.toString();
-    request.fields['Latitude'] = _LatitudeController.text;
-    request.fields['Longtitude'] = _LongtitudeController.text;
+    request.fields['Latitude'] = _latitudeController.text;
+    request.fields['Longtitude'] = _longtitudeController.text;
     request.fields['id_kategori'] = widget.idKategori.toString();
 
     request.files.add(await http.MultipartFile.fromPath('gambar', _image!.path));
@@ -91,8 +92,10 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
     final response = await request.send();
 
     if (response.statusCode == 201) {
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to create Wisata')),
       );
@@ -103,8 +106,8 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
   void dispose() {
     _namaController.dispose();
     _deskripsiController.dispose();
-    _LatitudeController.dispose();
-    _LongtitudeController.dispose();
+    _latitudeController.dispose();
+    _longtitudeController.dispose();
     super.dispose();
   }
 
@@ -164,7 +167,7 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _LatitudeController,
+              controller: _latitudeController,
               decoration: const InputDecoration(
                 labelText: 'Latitude',
                 labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209),),
@@ -178,7 +181,7 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _LongtitudeController,
+              controller: _longtitudeController,
               decoration: const InputDecoration(
                 labelText: 'Longitude',
                 labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209),),

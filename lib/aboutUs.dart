@@ -1,9 +1,11 @@
+// ignore_for_file: file_names, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 
 class AboutUs extends StatefulWidget {
-  const AboutUs({ Key? key }) : super(key: key);
+  const AboutUs({ super.key });
 
   @override
   _AboutUsState createState() => _AboutUsState();
@@ -62,7 +64,7 @@ class _AboutUsState extends State<AboutUs> {
                 subtitle: Text('Click to read more'),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
-              openBuilder: (context, action) => MissionDetails(),
+              openBuilder: (context, action) => const MissionDetails(),
             ),
             OpenContainer(
               closedElevation: 0,
@@ -74,7 +76,7 @@ class _AboutUsState extends State<AboutUs> {
                 subtitle: Text('Click to read more'),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
-              openBuilder: (context, action) => TeamDetails(),
+              openBuilder: (context, action) => const TeamDetails(),
             ),
             OpenContainer(
               closedElevation: 0,
@@ -86,7 +88,7 @@ class _AboutUsState extends State<AboutUs> {
                 subtitle: Text('Click to read more'),
                 trailing: Icon(Icons.arrow_forward_ios),
               ),
-              openBuilder: (context, action) => ContactDetails(),
+              openBuilder: (context, action) => const ContactDetails(),
             ),
           ],
         ),
@@ -96,6 +98,8 @@ class _AboutUsState extends State<AboutUs> {
 }
 
 class MissionDetails extends StatelessWidget {
+  const MissionDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,6 +119,8 @@ class MissionDetails extends StatelessWidget {
 }
 
 class TeamDetails extends StatelessWidget {
+  const TeamDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,6 +139,8 @@ class TeamDetails extends StatelessWidget {
 }
 
 class ContactDetails extends StatelessWidget {
+  const ContactDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

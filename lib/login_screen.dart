@@ -7,7 +7,6 @@ import 'package:dewatanv/services/data_service.dart';
 import 'package:dewatanv/utils/constants.dart';
 import 'package:dewatanv/utils/secure_storage_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,6 +14,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
@@ -24,21 +24,28 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isHovering = false;
 
-  void sendLogin(context, AuthCubit authCubit) async {
-    final username= _usernameController.text;
+  void sendLogin(BuildContext context, AuthCubit authCubit) async {
+    final username = _usernameController.text;
     final password = _passwordController.text;
 
     final response = await DataService.sendLoginData(username, password);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       debugPrint("sending success");
       final data = jsonDecode(response.body);
       final loggedIn = Login.fromJson(data);
       await SecureStorageUtil.storage.write(key: tokenStoreName, value: loggedIn.accessToken);
 
-      authCubit.login(loggedIn.accessToken);
+      authCubit.login(
+        loggedIn.accessToken, 
+        loggedIn.iduser,
+        loggedIn.namaUser,
+        loggedIn.role,
+        loggedIn.username
+      );
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/home-page');
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(), // Ganti dengan layar tujuan setelah login
+        pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(), 
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
@@ -53,9 +60,8 @@ class _LoginPageState extends State<LoginPage> {
           );
         },
       );
-      debugPrint(loggedIn.accessToken);
-    }
-    else{
+      debugPrint(loggedIn.role); // Debug print role untuk memastikan isinya benar
+    } else {
       debugPrint('failed send login');
     }
   }
@@ -148,10 +154,10 @@ class _LoginPageState extends State<LoginPage> {
                   MouseRegion(
                     onEnter: (_) => setState(() => _isHovering = true),
                     onExit: (_) => setState(() => _isHovering = false),
-                  child: InkWell(
-                    onTap: () { sendLogin(context, authCubit); },
-                    //onTap: () => Navigator.pushReplacementNamed(context, '/home-page'),
-                    child: AnimatedContainer(
+                    child: InkWell(
+                      onTap: () { sendLogin(context, authCubit); },
+                      //onTap: () => Navigator.pushReplacementNamed(context, '/home-page'),
+                      child: AnimatedContainer(
                         duration: const Duration(seconds: 2),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
@@ -160,30 +166,30 @@ class _LoginPageState extends State<LoginPage> {
                                 ? [const Color.fromARGB(255, 0, 0, 0), const Color.fromARGB(255, 0, 0, 0)] // Warna berubah saat hover
                                 : [const Color(0xFF61A4F1), const Color(0xFF478DE0)],
                           ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color.fromRGBO(143, 148, 251, .4),
-                            blurRadius: 20.0,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromRGBO(143, 148, 251, .4),
+                              blurRadius: 20.0,
+                              offset: Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                       ),
                     ),
-                  ),
                   ),
                   const SizedBox(height: 10),
                   MouseRegion(
                     onEnter: (_) => setState(() => _isHovering = true),
                     onExit: (_) => setState(() => _isHovering = false),
-                  child: InkWell(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/register'),
-                    child: AnimatedContainer(
+                    child: InkWell(
+                      onTap: () => Navigator.pushReplacementNamed(context, '/register'),
+                      child: AnimatedContainer(
                         duration: const Duration(seconds: 2),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
@@ -192,22 +198,22 @@ class _LoginPageState extends State<LoginPage> {
                                 ? [const Color.fromARGB(255, 0, 0, 0), const Color.fromARGB(255, 0, 0, 0)] // Warna berubah saat hover
                                 : [const Color(0xFF61A4F1), const Color(0xFF478DE0)],
                           ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color.fromRGBO(143, 148, 251, .4),
-                            blurRadius: 20.0,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Register',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromRGBO(143, 148, 251, .4),
+                              blurRadius: 20.0,
+                              offset: Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                       ),
                     ),
-                  ),
                   ),
                   const SizedBox(height: 10,),
                   TextButton(
@@ -225,8 +231,14 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Implementasi aksi FAB di sini, misalnya navigasi ke layar lain
+          Navigator.pushNamed(context, '/internet'); // Ganti dengan rute yang diinginkan
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
-
-

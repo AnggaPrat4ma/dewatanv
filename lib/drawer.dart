@@ -7,7 +7,7 @@ class MyDrawer extends StatelessWidget {
   final String username;
   final String backgroundImage;
 
-  MyDrawer({required this.username, required this.backgroundImage});
+  const MyDrawer({super.key, required this.username, required this.backgroundImage});
 
   Future<void> doLogout(context) async {
     debugPrint("need logout");

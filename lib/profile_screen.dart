@@ -1,65 +1,122 @@
+import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
+import 'package:dewatanv/dto/profile.dart';
+import 'package:dewatanv/endpoints/endpoints.dart';
+import 'package:dewatanv/services/data_service.dart';
+import 'package:dewatanv/update_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<List<Akun>> akunData;
+
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthCubit>().state;
+    akunData = DataService.fetchAkunById(authState.idUser);
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/images/angga.jpg'),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Gede Angga Putra Pratama',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FutureBuilder<List<Akun>>(
+                future: akunData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final data = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final item = data[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(
+                                      item.gambar.isNotEmpty
+                                          ? '${Endpoints.baseUrl}/static/${item.gambar}'
+                                          : '${Endpoints.baseUrl}/static/img/default.png',
+                                    ),
+                                  ),
+                                  Text(
+                                    item.namaUser,
+                                    style: const TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(item.role),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.location_on),
+                                      Text(
+                                        item.lokasi.isNotEmpty
+                                            ? item.lokasi
+                                            : 'Indonesia',
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: () {
+                                          // Implement edit action here
+                                          // For example, navigate to edit screen
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile(akun: item,)));
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Error: ${snapshot.error}"),
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
               ),
-            ),
-            const SizedBox(height: 10),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.location_on,
-                  color: Colors.grey,
-                ),
-                SizedBox(width: 5),
-                Text(
-                  'Bali, Indonesia',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Saya Sangat Suka Berliburan di Wisata yang Bernuansa Lautan.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Divider(),
-            _buildTabBar(),
-            _buildGridView(),
-          ],
+              _buildTabBar(),
+              _buildGridView()
+            ],
+          ),
         ),
       ),
     );
@@ -76,11 +133,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Tab(icon: Icon(Icons.bookmark)),
             ],
           ),
-          Container(
-            height: 400, // Height of the TabBarView
+          SizedBox(
+            height: 400,
             child: TabBarView(
               children: [
-                _buildGridView(), // Placeholder for likes view
+                _buildGridView(),
               ],
             ),
           ),
@@ -98,6 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisSpacing: 5,
         mainAxisSpacing: 5,
       ),
+      itemCount: 12,
       itemBuilder: (context, index) {
         return Container(
           color: Colors.grey[300],
@@ -107,9 +165,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       },
-      itemCount: 12, // Number of posts
     );
   }
 }
-
-void main() => runApp(const MaterialApp(home: ProfileScreen()));

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -16,7 +16,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _selectedIndex = 0;
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
+
+  @override
+  void initState(){
+    super.initState();
+  }
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -59,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         backgroundColor: const Color.fromARGB(255, 30, 129, 209),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: MyDrawer(
+      drawer: const MyDrawer(
         username: 'Angga Pratama',
         backgroundImage: 'assets/images/angga.jpg',
       ),

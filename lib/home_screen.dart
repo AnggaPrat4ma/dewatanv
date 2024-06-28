@@ -1,10 +1,11 @@
-import 'package:dewatanv/wisata/pantai_penimbangan.dart';
+import 'package:dewatanv/kategori/search.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -99,9 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 'Monumen Bajra Sandhi':
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PantaiPenimbangan()),
+          MaterialPageRoute(builder: (context) => const WisataSearchPage()),
         );
-      break;
+        break;
     }
   }
 
@@ -109,13 +110,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: List.generate(5, (index) {
         return Icon(
-          index < rating ? Icons.star : Icons.star_border ,
+          index < rating ? Icons.star : Icons.star_border,
           size: 16.0,
           color: Colors.amber,
         );
       }),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -137,27 +139,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear, color: Colors.grey),
-                            onPressed: () {
-                              _searchController.clear();
-                            },
-                          )
-                        : null,
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/search');
+                  },
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.search, color: Colors.grey),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onTap: () {
+                            Navigator.pushNamed(context, '/search');
+                          },
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            hintText: 'Search...',
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 15.0),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
             // Featured Content Slider
-            Container(
+            SizedBox(
               height: 200.0,
               child: PageView.builder(
                 itemCount: featuredContents.length,
@@ -205,7 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 5.0),
-                              _buildStarRating(featuredContents[index]['rating']),
+                              _buildStarRating(
+                                  featuredContents[index]['rating']),
                             ],
                           ),
                         ),
