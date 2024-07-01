@@ -1,7 +1,8 @@
-import 'package:dewatanv/aboutUs.dart';
+import 'package:dewatanv/about_us.dart';
 import 'package:dewatanv/components/auth_wrapper.dart';
 import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
+import 'package:dewatanv/help.dart';
 import 'package:dewatanv/home_page.dart';
 import 'package:dewatanv/home_screen.dart';
 import 'package:dewatanv/internet.dart';
@@ -34,8 +35,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        //BlocProvider<wisataCubit>(create: (context) => wisataCubitit()),
-        // BlocProvider<BalanceCubit>(create: (context) => BalanceCubit()),
         BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
       ], 
       child: MaterialApp(
@@ -43,6 +42,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       home: const MyHomePage(title: 'DewatAnv'),
       routes: {
@@ -54,7 +54,8 @@ class MyApp extends StatelessWidget {
         '/register':(context) => const Register(),
         '/search':(context) => const WisataSearchPage(),
         '/internet':(context) => const InputIp(),
-        '/autologin':(context) => const AuthWrapper(child: LoginPage())
+        '/autologin':(context) => const AuthWrapper(child: LoginPage()),
+        '/help-screen':(context) => const HelpCenter(),
       },
     ));
   }

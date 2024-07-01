@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
 import 'package:dewatanv/dto/login.dart';
 import 'package:dewatanv/home_screen.dart';
@@ -23,6 +22,63 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isHovering = false;
+
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Login Failed',
+                style: GoogleFonts.pacifico(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                message,
+                style: const TextStyle(fontSize: 18, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                ),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   void sendLogin(BuildContext context, AuthCubit authCubit) async {
     final username = _usernameController.text;
@@ -62,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       debugPrint(loggedIn.role); // Debug print role untuk memastikan isinya benar
     } else {
+      showErrorDialog('Incorrect username or password.');
       debugPrint('failed send login');
     }
   }
@@ -156,7 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                     onExit: (_) => setState(() => _isHovering = false),
                     child: InkWell(
                       onTap: () { sendLogin(context, authCubit); },
-                      //onTap: () => Navigator.pushReplacementNamed(context, '/home-page'),
                       child: AnimatedContainer(
                         duration: const Duration(seconds: 2),
                         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -237,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushNamed(context, '/internet'); // Ganti dengan rute yang diinginkan
         },
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.wifi_find),
       ),
     );
   }

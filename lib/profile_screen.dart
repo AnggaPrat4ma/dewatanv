@@ -1,10 +1,12 @@
 import 'package:dewatanv/cubit/auth/cubit/auth_cubit.dart';
 import 'package:dewatanv/dto/profile.dart';
+import 'package:dewatanv/dto/wisatfavorite.dart';
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:dewatanv/services/data_service.dart';
 import 'package:dewatanv/update_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,17 +18,18 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<List<Akun>> akunData;
+  late Future<List<Wisatafavorit>> wisataFavoritData;
 
   @override
   void initState() {
     super.initState();
     final authState = context.read<AuthCubit>().state;
     akunData = DataService.fetchAkunById(authState.idUser);
+    wisataFavoritData = DataService.fetchWisataFavoritByUser(authState.idUser);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -73,7 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(item.role),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Icon(Icons.location_on),
                                       Text(
@@ -88,9 +92,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       IconButton(
                                         icon: const Icon(Icons.edit),
                                         onPressed: () {
-                                          // Implement edit action here
-                                          // For example, navigate to edit screen
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProfile(akun: item,)));
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UpdateProfile(
+                                                akun: item,
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
                                     ],
@@ -114,7 +124,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               _buildTabBar(),
-              _buildGridView()
             ],
           ),
         ),
@@ -147,22 +156,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildGridView() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-      ),
-      itemCount: 12,
-      itemBuilder: (context, index) {
-        return Container(
-          color: Colors.grey[300],
-          child: Image.network(
-            'https://www.example.com/post_image_$index.jpg',
-            fit: BoxFit.cover,
-          ),
+    return FutureBuilder<List<Wisatafavorit>>(
+      future: wisataFavoritData,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final data = snapshot.data!;
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+            ),
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              final item = data[index];
+              return InkWell(
+                // onTap: () {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => WisataDetailScreen(wisata: item),
+                //     ),
+                //   );
+                // },
+                child: Card(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          item.gambar,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.error, size: 40),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.nama,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            Text(
+                              item.deskripsi,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                RatingBar(
+                                  minRating: 1,
+                                  maxRating: 5,
+                                  ignoreGestures: true,
+                                  allowHalfRating: false,
+                                  initialRating: item.rating.toDouble(),
+                                  itemSize: 18.0,
+                                  ratingWidget: RatingWidget(
+                                    full: const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    half: const Icon(
+                                      Icons.star_half,
+                                      color: Colors.amber,
+                                    ),
+                                    empty: const Icon(
+                                      Icons.star_border,
+                                      color: Colors.amber,
+                                    ),
+                                  ),
+                                  onRatingUpdate: (double rating) {},
+                                ),
+                                const SizedBox(width: 5),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Error: ${snapshot.error}"),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );

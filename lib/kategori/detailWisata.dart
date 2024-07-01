@@ -39,6 +39,54 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
     });
   }
 
+  void _toggleFavorite() async {
+    final authState = context.read<AuthCubit>().state;
+    final userId = authState.idUser; // Ambil id pengguna dari state cubit
+
+    try {
+      // Panggil metode untuk menambah atau menghapus favorit sesuai kondisi
+      if (authState.isFavoriteList
+          .contains(widget.wisata.idwisata.toString())) {
+        await DataService.removeFavorite(userId, widget.wisata.idwisata);
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red, // Ubah ke warna merah untuk menghapus
+            content: Text('Wisata dihapus dari favorit!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        await DataService.addFavorite(userId, widget.wisata.idwisata);
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green, // Ubah ke warna hijau untuk menambah
+            content: Text('Wisata ditambahkan ke favorit!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Refresh data atau lakukan tindakan sesuai kebutuhan
+      // ignore: use_build_context_synchronously
+      context
+          .read<AuthCubit>()
+          .toggleFavorite(widget.wisata.idwisata.toString());
+    } catch (error) {
+      // Tangani kesalahan jika operasi gagal
+      debugPrint('Gagal mengubah status favorit: $error');
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Operasi gagal, coba lagi nanti.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   void _deleteWisata(int idwisata) {
     showDialog(
       context: context,
@@ -52,6 +100,7 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
                 await DataService.deleteWisata(idwisata);
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
+                refresh();
                 // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -60,7 +109,6 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
                     duration: Duration(seconds: 2),
                   ),
                 );
-                refresh();
               } catch (error) {
                 debugPrint('Gagal menghapus data: $error');
               }
@@ -186,25 +234,16 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
                         ],
                       );
                     } else {
-                      return BlocBuilder<AuthCubit, AuthState>(
-                        builder: (context, state) {
-                          final isFavorite = state.isFavoriteList
-                              .contains(widget.wisata.idwisata.toString());
-                          return IconButton(
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_border,
-                              color: isFavorite ? Colors.blue : Colors.grey,
-                              size: 40,
-                            ),
-                            onPressed: () {
-                              context.read<AuthCubit>().toggleFavorite(
-                                  widget.wisata.idwisata.toString());
-                            },
-                          );
-                        },
-                      );  
+                      final isFavorite = state.isFavoriteList
+                          .contains(widget.wisata.idwisata.toString());
+                      return IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.bookmark : Icons.bookmark_border,
+                          color: isFavorite ? Colors.blue : Colors.grey,
+                          size: 40,
+                        ),
+                        onPressed: _toggleFavorite,
+                      );
                     }
                   },
                 ),

@@ -3,7 +3,7 @@ import 'package:dewatanv/utils/secure_storage_util.dart';
 
 class Endpoints {
   //uas
-  static String baseUrl='192.168.75.223:5000';
+  static String baseUrl='';
 
   static String login= '';
   static String kategori= '';
@@ -13,6 +13,7 @@ class Endpoints {
   static String profile= '';
   static String akun = '';
   static String logout= '';
+  static String favorite='';
 
   static Future<void> initializeURLs() async {
     try {
@@ -31,6 +32,7 @@ class Endpoints {
         delete= "$baseUrl/data_wisata/delete";
         akun = "$baseUrl/akun";
         logout= "$baseUrl/auth/logout";
+        favorite= "$baseUrl/wisata_favorit";
       } else {
         // Handle the case where the base URL is not set or invalid
         throw Exception('Base URL is empty');

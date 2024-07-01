@@ -24,7 +24,7 @@ class MyDrawer extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1A237E), Color(0xFF0D47A1)],
+            colors: [Color(0xFFE0F7FA), Color(0xFFE0F2F1)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -52,7 +52,7 @@ class MyDrawer extends StatelessWidget {
                         child: Text(
                           username,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Colors.black87,
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
@@ -63,7 +63,7 @@ class MyDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(color: Colors.white),
+            const Divider(color: Colors.black54),
             _createDrawerItem(
               icon: Icons.person,
               text: 'About Us',
@@ -72,7 +72,7 @@ class MyDrawer extends StatelessWidget {
             _createDrawerItem(
               icon: Icons.help,
               text: 'Help Center',
-              onTap: () => Navigator.pushReplacementNamed(context, '/help-screen'),
+              onTap: () => Navigator.pushNamed(context, '/help-screen'),
             ),
             _createDrawerItem(
               icon: Icons.logout,
@@ -91,11 +91,11 @@ class MyDrawer extends StatelessWidget {
     required GestureTapCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.white),
+      leading: Icon(icon, color: Colors.black87),
       title: Text(
         text,
         style: const TextStyle(
-          color: Colors.white,
+          color: Colors.black87,
           fontWeight: FontWeight.bold,
         ),
       ),

@@ -212,7 +212,7 @@ class _UpdateWisataScreenState extends State<UpdateWisataScreen> {
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
-                                    "${Endpoints.baseUrl}/static/${widget.wisata.gambar}",
+                                    widget.wisata.gambar,
                                     fit: BoxFit.cover,
                                   ),
                                 )

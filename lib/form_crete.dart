@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dewatanv/endpoints/endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -68,9 +70,14 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_image == null) {
+    // Validasi semua field terisi
+    if (_namaController.text.isEmpty ||
+        _deskripsiController.text.isEmpty ||
+        _latitudeController.text.isEmpty ||
+        _longtitudeController.text.isEmpty ||
+        _image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image')),
+        const SnackBar(content: Text('Please fill in all fields')),
       );
       return;
     }
@@ -92,10 +99,8 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
     final response = await request.send();
 
     if (response.statusCode == 201) {
-      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to create Wisata')),
       );
@@ -125,7 +130,7 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
           'Create Wisata',
           style: GoogleFonts.pacifico(
             color: Colors.white,
-            fontSize: 30,
+            fontSize: 28,
           ),
         ),
         centerTitle: true,
@@ -139,65 +144,78 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
           children: [
             TextField(
               controller: _namaController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nama Wisata',
-                labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209)),
+                labelStyle: const TextStyle(color: Color.fromARGB(255, 30, 129, 209)),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
+                prefixIcon: const Icon(Icons.place, color: Color.fromARGB(255, 30, 129, 209)),
               ),
             ),
             const SizedBox(height: 16.0),
             TextField(
               controller: _deskripsiController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Deskripsi',
-                labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209),),
+                labelStyle: const TextStyle(color: Color.fromARGB(255, 30, 129, 209)),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
+                prefixIcon: const Icon(Icons.description, color: Color.fromARGB(255, 30, 129, 209)),
               ),
               maxLines: 3,
             ),
             const SizedBox(height: 16.0),
             TextField(
               controller: _latitudeController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Latitude',
-                labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209),),
+                labelStyle: const TextStyle(color: Color.fromARGB(255, 30, 129, 209)),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
+                prefixIcon: const Icon(Icons.map, color: Color.fromARGB(255, 30, 129, 209)),
               ),
             ),
             const SizedBox(height: 16.0),
             TextField(
               controller: _longtitudeController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Longitude',
-                labelStyle: TextStyle(color: Color.fromARGB(255, 30, 129, 209),),
+                labelStyle: const TextStyle(color: Color.fromARGB(255, 30, 129, 209)),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromARGB(255, 30, 129, 209),),
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: const BorderSide(color: Color.fromARGB(255, 30, 129, 209)),
                 ),
+                prefixIcon: const Icon(Icons.map_outlined, color: Color.fromARGB(255, 30, 129, 209)),
               ),
             ),
             const SizedBox(height: 16.0),
             const Text(
               'Rating:',
-              style: TextStyle(fontSize: 16.0, color: Color.fromARGB(255, 30, 129, 209),),
+              style: TextStyle(fontSize: 16.0, color: Color.fromARGB(255, 30, 129, 209)),
             ),
+            const SizedBox(height: 8.0),
             RatingBar.builder(
               initialRating: rating,
               minRating: 1,
@@ -217,25 +235,26 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
                   _showPicker(context: context);
                 },
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: _image != null
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                           child: Image.file(
                             _image!,
-                            width: 100,
-                            height: 100,
+                            width: 150,
+                            height: 150,
                             fit: BoxFit.cover,
                           ),
                         )
                       : Icon(
                           Icons.camera_alt,
                           color: Colors.grey[800],
+                          size: 50,
                         ),
                 ),
               ),
@@ -246,9 +265,12 @@ class _CreateWisataScreenState extends State<CreateWisataScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 30, 129, 209),
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                 ),
                 onPressed: _submitForm,
-                child: const Text('Submit', style: TextStyle(color: Colors.white),),
+                child: const Text('Submit', style: TextStyle(color: Colors.white, fontSize: 18)),
               ),
             ),
           ],
